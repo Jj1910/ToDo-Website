@@ -1,0 +1,24 @@
+services:
+  todosite:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "ToDoSite"
+    volumes:
+      - ./Site:/var/www/html:ro
+      - ./Logs:/var/log/apache2
+    ports:
+      - 9006:80
+
+  ToDoDB:
+    image: mysql
+    container_name: "ToDoDB"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes: 
+      - ./data:/var/lib/mysql
+    ports:
+      - 9007:3306

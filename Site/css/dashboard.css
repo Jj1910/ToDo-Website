@@ -1,0 +1,144 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Header Styles */
+.Header-Dashboard {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.Header-Dashboard h1 {
+    color: #333;
+    font-size: 2rem;
+}
+
+/* Task Form Styles */
+.Task-Form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.Task-Description {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.Add-Task {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.Add-Task:hover {
+    background-color: #218838;
+}
+
+/* Task Table Styles */
+.Task-Table {
+    width: 30%;
+    margin: 20px 0;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.Task-Table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.Table-Header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.Table-Row:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.Description {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Delete Button */
+.Delete-Button {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.Delete-Button:hover {
+    background-color: #c82333;
+}
+
+/* Logout Button */
+.Logout-Form {
+    margin-top: 20px;
+}
+
+.Logout-Button {
+    background-color: #ffc107;
+    color: black;
+    padding: 10px 15px;
+    border: none;
+    /* border-radius: 5px; */
+    cursor: pointer;
+    font-size: 1rem;
+    /* Make Logout Button a Footer */
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    border-radius: 0;
+    width: 100%;
+    z-index: 1;
+    text-align: center;
+}
+
+.Logout-Button:hover {
+    background-color: #e0a800;
+}
+
+p {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+h2 {
+    color: green;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2rem;
+}
