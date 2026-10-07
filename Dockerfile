@@ -8,6 +8,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo pdo_mysql mbstring
 
+RUN printf 'display_errors = Off\nlog_errors = On\nexpose_php = Off\n' \
+    > /usr/local/etc/php/conf.d/zz-security.ini
+
 # Explicit, sensible OPcache tuning for a small app (speed).
 RUN { \
       echo 'opcache.enable=1'; \
