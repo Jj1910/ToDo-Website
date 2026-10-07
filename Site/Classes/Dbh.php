@@ -4,7 +4,7 @@ class Dbh {
     private $host = "ToDoDB";
     private $dbname = "todo_site";
     private $dbusername = "todo_user";
-    private $dbpassword = "mH8Ml73XGF3BrPu1TFwZ";
+    private $dbpassword = "SuperSecurePassword";
 
     protected function connect () {
         try {
