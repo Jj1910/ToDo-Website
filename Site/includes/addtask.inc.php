@@ -1,21 +1,28 @@
 <?php
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    
-    $description = $_POST["description"];
+declare(strict_types=1);
 
-    require_once './config_session.inc.php';
-    require_once '../Classes/Dbh.php';
-    require_once '../Classes/AddTask_Model.php';
-    require_once '../Classes/AddTask_Contr.php';
-    
-    $AddTaskContr = new AddTaskContr($description, $_SESSION["user_id"]);
-
-    $AddTaskContr->AddTask();
-
-    $die();
-
-} else {
+if (($_SERVER["REQUEST_METHOD"] ?? "") !== "POST") {
     header("Location: ../dashboard.php");
-    die();
+    exit;
 }
+
+require_once __DIR__ . '/config_session.inc.php';
+
+// Not logged in?  Send back to the login page instead of crashing on a
+// missing session value.
+if (empty($_SESSION["user_id"])) {
+    header("Location: ../index.php");
+    exit;
+}
+
+$description = trim((string)($_POST["description"] ?? ""));
+
+require_once __DIR__ . '/../Classes/Dbh.php';
+require_once __DIR__ . '/../Classes/AddTask_Model.php';
+require_once __DIR__ . '/../Classes/AddTask_Contr.php';
+
+verify_csrf();
+
+$AddTaskContr = new AddTaskContr($description, (int)$_SESSION["user_id"]);
+$AddTaskContr->AddTask(); // always ends in header() + exit

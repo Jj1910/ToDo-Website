@@ -1,24 +1,80 @@
 services:
+  # NOTE: the service key must stay lowercase — docker compose derives the
+  # build image name from it and image repositories must be lowercase.
   todosite:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: "ToDoSite"
+    restart: unless-stopped
+    depends_on:
+      # Wait until the (re)applied schema has been verified before serving.
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      # Shared with the DB service so the PHP app and MySQL always agree.
+      # Dbh.php reads these same variables, so .env overrides work end-to-end.
+      MYSQL_HOST: ToDoDB
+      MYSQL_USER: ${MYSQL_USER:-todo_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-SuperSecurePassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-todo_site}
     volumes:
       - ./Site:/var/www/html:ro
       - ./Logs:/var/log/apache2
     ports:
       - 9006:80
 
+  db-init:
+    # One-shot repeatability service: re-runs the idempotent db/init.sql on
+    # every `docker compose up`.  Tables are (re)created if they don't exist
+    # and the default admin account is restored, no matter what state the
+    # data directory is in.  Retries to cover first-boot initialization.
+    image: mysql:8.0
+    container_name: "ToDoDBInit"
+    depends_on:
+      ToDoDB:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: ToDoDB
+      MYSQL_USER: ${MYSQL_USER:-todo_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-SuperSecurePassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-todo_site}
+    volumes:
+      - ./db:/scripts:ro
+    entrypoint: ["bash", "-c"]
+    command:
+      - |
+        for i in $$(seq 1 30); do
+          if mysql --host=$$MYSQL_HOST --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --database=$$MYSQL_DATABASE < /scripts/init.sql 2>/dev/null; then
+            echo "db-init: schema verified/applied"
+            exit 0
+          fi
+          sleep 2
+        done
+        echo "db-init: FAILED to apply schema (see logs)" >&2
+        exit 1
+
   ToDoDB:
-    image: mysql
+    image: mysql:8.0
     container_name: "ToDoDB"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: true
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-    volumes: 
-      - ./data:/var/lib/mysql
+      MYSQL_USER: ${MYSQL_USER:-todo_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-SuperSecurePassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-todo_site}
+    volumes:
+      - ./Data:/var/lib/mysql
+      # Runs automatically the first time the DB starts (empty volume).
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
       - 9007:3306
+
+volumes:
+  tododb_data:
