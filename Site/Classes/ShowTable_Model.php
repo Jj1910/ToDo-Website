@@ -15,11 +15,11 @@ class ShowTableModel extends Dbh {
         }
 
         $query = "SELECT id, description, created_at FROM " . $tableName
-               . " WHERE user_id = :user_id ORDER BY created_at DESC, id DESC;";
+               . " WHERE user_id = :user_id ORDER BY created_at ASC, id ASC;";
         $stmt = parent::connect()->prepare($query);
         $stmt->bindParam(":user_id", $user_id, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll();
     }
-}
+}
