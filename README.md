@@ -53,12 +53,9 @@ service re-applies it on **every** `docker compose up`.  That means:
 To reset to a completely blank database:
 
 ```
-docker compose down -v
+sudo rm -rf ./Data
 docker compose up -d
 ```
-
-(`-v` removes the database volume; all tasks and extra users are deleted and
-the default `admin/admin123` account comes back.)
 
 ### Configuration
 
@@ -87,4 +84,4 @@ variables, so overrides apply end-to-end.
   the PHP app reads the `MYSQL_*` environment variables (see Configuration).
 - **Login works but the page keeps bouncing** — make sure your browser isn't
   blocking the session cookie, and that you're not mixing hosts (the cookie
-  is scoped to the host you logged in on).
+  is scoped to the host you logged in on).
